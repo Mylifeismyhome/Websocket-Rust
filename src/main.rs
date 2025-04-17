@@ -22,8 +22,8 @@ use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_int, c_uchar, c_void};
 use std::sync::OnceLock;
 
-mod binding;
-use binding::*;
+mod bindings;
+use bindings::*;
 
 #[cfg(target_os = "windows")]
 const LIB_NAME: &str = "Websocket.dll";

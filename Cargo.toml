@@ -1,0 +1,26 @@
+[package]
+name = "ws"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+libloading = "0.8.6"
+libc = "1.0.0-alpha.1"
+bindgen = "0.71.1"
+windows-bindgen = "0.61.0"
+
+[features]
+client = []
+server = []
+default = ["client"]
+
+[[bin]]
+name = "client"
+path = "src/main.rs"
+required-features = ["client"]
+
+[[bin]]
+name = "server"
+path = "src/main.rs"
+required-features = ["server"]
+

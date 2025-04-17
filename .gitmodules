@@ -1,0 +1,3 @@
+[submodule "submodule/Websocket"]
+	path = submodule/Websocket
+	url = https://github.com/Mylifeismyhome/Websocket.git

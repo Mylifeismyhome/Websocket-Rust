@@ -1,90 +1,103 @@
-Websocket-Rust
+# Websocket-Rust
 
 This repository provides a Rust wrapper around a C-based WebSocket implementation, exposing it as a shared library with a C-compatible API. It enables projects written in C, C++, or other FFI-friendly languages to easily integrate WebSocket capabilities powered by Rust.
-🧩 Structure
+
+## 🧩 Structure
 
 This project uses a Git submodule:
 
-    Websocket: A C-based WebSocket implementation.
+- [`Websocket`](https://github.com/Mylifeismyhome/Websocket): A C-based WebSocket implementation.
 
-📦 Features
+## 📦 Features
 
-    Wraps a C WebSocket library with Rust.
+- Wraps a C WebSocket library with Rust.
+- Exposes a C-compatible API via a shared library (`.so`, `.dll`, `.dylib`).
+- Uses [`bindgen`](https://docs.rs/bindgen/latest/bindgen/) to generate C bindings for Rust.
+- Enables FFI-friendly WebSocket communication.
 
-    Exposes a C-compatible API via a shared library (.so, .dll, .dylib).
+## 🚀 Getting Started
 
-    Uses bindgen to generate C bindings for Rust.
+### 1. Clone with submodules
 
-    Enables FFI-friendly WebSocket communication.
-
-🚀 Getting Started
-1. Clone with submodules
-
+```bash
 git clone --recurse-submodules https://github.com/Mylifeismyhome/Websocket-Rust.git
 cd Websocket-Rust
+```
 
-2. Install Prerequisites
+### 2. Install Prerequisites
 
 You will need the following installed:
 
-    Rust and Cargo: https://www.rust-lang.org/tools/install
+- [Rust and Cargo](https://www.rust-lang.org/tools/install)
+- [LLVM + Clang](https://llvm.org/)
+- Git
 
-    LLVM + Clang: https://llvm.org/
+#### On Ubuntu/Debian:
 
-    Git
-
-On Ubuntu/Debian:
-
+```bash
 sudo apt update
 sudo apt install llvm clang build-essential git
+```
 
-On macOS:
+#### On macOS:
 
+```bash
 brew install llvm
+```
 
-    Make sure LLVM is in your PATH:
+Make sure LLVM is in your PATH:
 
-    export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+```bash
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+```
 
-On Windows:
+#### On Windows:
 
-    Install LLVM via https://releases.llvm.org/ or:
+Install LLVM via [releases.llvm.org](https://releases.llvm.org/) or:
 
+```bash
 choco install llvm
+```
 
-    Install Rust via https://rustup.rs
+Install Rust via [rustup.rs](https://rustup.rs)
 
-    Ensure cargo and clang are in your system PATH.
+Ensure `cargo` and `clang` are in your system PATH.
 
-3. Build
-On Windows:
+### 3. Build
 
+#### On Windows:
+
+```bash
 build.bat
+```
 
-This compiles the Rust code and generates a C header using bindgen.
-On macOS / Linux:
+This compiles the Rust code and generates a C header using `bindgen`.
 
+#### On macOS / Linux:
+
+```bash
 chmod +x build.sh
 ./build.sh
+```
 
 Same as above—builds the shared library and generates the C header.
-🏗️ Output
+
+## 🏗️ Output
 
 After building, you'll find:
 
-    target/release/websocket.dll (Windows)
+- `target/release/websocket.dll` (Windows)
+- `target/release/libwebsocket.so` (Linux)
+- `target/release/libwebsocket.dylib` (macOS)
+- `websocket.h` — C header for the public API
 
-    target/release/libwebsocket.so (Linux)
-
-    target/release/libwebsocket.dylib (macOS)
-
-    websocket.h — C header for the public API
-
-🔧 Using the Library in C/C++
+## 🔧 Using the Library in C/C++
 
 Include the header and link against the compiled shared library in your C/C++ project.
-Example C usage:
 
+### Example C usage:
+
+```c
 #include "websocket.h"
 
 int main() {
@@ -92,24 +105,23 @@ int main() {
     // your logic here
     return 0;
 }
+```
 
-    Ensure your compiler knows where to find the header and library:
+Ensure your compiler knows where to find the header and library:
 
-        On Linux/macOS, you might need to set LD_LIBRARY_PATH or DYLD_LIBRARY_PATH.
+- On Linux/macOS, you might need to set `LD_LIBRARY_PATH` or `DYLD_LIBRARY_PATH`.
+- On Windows, make sure the `.dll` is in the same directory as your executable or in your `PATH`.
 
-        On Windows, make sure the .dll is in the same directory as your executable or in your PATH.
+## ❓ Troubleshooting
 
-❓ Troubleshooting
+- If `bindgen` fails, make sure LLVM and Clang are correctly installed and accessible via PATH.
+- On Windows, use the MSVC toolchain and developer command prompt if needed.
 
-    If bindgen fails, make sure LLVM and Clang are correctly installed and accessible via PATH.
+## 📄 License
 
-    On Windows, use the MSVC toolchain and developer command prompt if needed.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more info.
 
-📄 License
+---
 
-This project is licensed under the MIT License. See the LICENSE file for more info.
-
-Maintained by @Mylifeismyhome
+Maintained by [@Mylifeismyhome](https://github.com/Mylifeismyhome)  
 Feel free to open issues or pull requests!
-
-Let me know if you'd like a websocket.h example too or help wiring it into a CMake or Makefile project!

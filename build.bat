@@ -36,6 +36,10 @@ cmake --build . --config %BUILD_TYPE%
 cd ..\..\..
 
 :: Build Rust binaries
+set LIBCLANG_PATH=C:\Software\LLVM\bin
+
+bindgen submodule\Websocket\include\websocket\api\websocket_c_api.h -o src\bindings.rs --with-derive-default -- -xc++ -std=c++17 -DWEBSOCKET_C_API -Isubmodule\Websocket\include\
+
 if "%BUILD_TYPE%"=="release" (
     cargo build --release --no-default-features --features server --bin server
     cargo build --release --no-default-features --features client --bin client

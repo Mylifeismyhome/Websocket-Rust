@@ -2,12 +2,15 @@
 name = "ws"
 version = "0.1.0"
 edition = "2024"
+build = "build.rs"
 
 [dependencies]
 libloading = "0.8.6"
 libc = "1.0.0-alpha.1"
+cc = "1.2.19"
+
+[build-dependencies]
 bindgen = "0.71.1"
-windows-bindgen = "0.61.0"
 
 [features]
 client = []

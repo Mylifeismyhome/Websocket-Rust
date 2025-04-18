@@ -6,22 +6,16 @@
     unsafe_op_in_unsafe_fn
 )]
 
-// =============================================================
-// Single source supporting **two roles** at compile‑time:
-//   cargo run --features client   # WebSocket client
-//   cargo run --features server   # WebSocket server
-// =============================================================
-
 #[cfg(all(not(feature = "client"), not(feature = "server")))]
 compile_error!("Enable either the `client` or `server` feature (exactly one).");
 #[cfg(all(feature = "client", feature = "server"))]
 compile_error!("Features `client` and `server` are mutually exclusive.");
 
-use std::env;
-use std::path::PathBuf;
 use libloading::{Library, Symbol};
+use std::env;
 use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_int, c_uchar, c_void};
+use std::path::PathBuf;
 use std::sync::OnceLock;
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
@@ -33,7 +27,6 @@ const LIB_NAME: &str = "Websocket.so";
 #[cfg(target_os = "macos")]
 const LIB_NAME: &str = "Websocket.dylib";
 
-// ── runtime‑loaded helpers for frame creation/emission ───────────────────────
 static FRAME_CREATE: OnceLock<unsafe extern "C" fn(e_ws_frame_opcode) -> *mut c_void> =
     OnceLock::new();
 static FRAME_PUSH: OnceLock<unsafe extern "C" fn(*mut c_void, *const c_uchar, usize) -> bool> =
@@ -42,7 +35,6 @@ static FRAME_EMIT: OnceLock<unsafe extern "C" fn(*mut c_void, c_int, *mut c_void
     OnceLock::new();
 static FRAME_DESTROY: OnceLock<unsafe extern "C" fn(*mut c_void)> = OnceLock::new();
 
-// ── defaults helper ───────────────────────────────────────────
 fn default_ws_settings() -> ws_settings_t {
     let mut s: ws_settings_t = unsafe { core::mem::zeroed() };
     s.endpoint = if cfg!(feature = "client") {
@@ -76,13 +68,11 @@ unsafe fn destroy_ws_settings(s: &mut ws_settings_t) {
     *s = core::mem::zeroed();
 }
 
-// ── event C‑strings ───────────────────────────────────────────
 const EVT_OPEN: &[u8] = b"open\0";
 const EVT_CLOSE: &[u8] = b"close\0";
 const EVT_FRAME: &[u8] = b"frame\0";
 const EVT_ERROR: &[u8] = b"error\0";
 
-// ── callbacks ─────────────────────────────────────────────────
 unsafe extern "C" fn on_open(ctx: *mut c_void, fd: c_int, addr: *const c_char) {
     let peer = if addr.is_null() {
         "<null>"
@@ -132,22 +122,19 @@ unsafe extern "C" fn on_error(_ctx: *mut c_void, msg: *const c_char) {
     eprintln!("[error] {m}");
 }
 
-// ── entry point ───────────────────────────────────────────────
-
 type ResultE<T> = Result<T, Box<dyn std::error::Error>>;
 
 fn get_library_path(lib_name: &str) -> Result<PathBuf, Box<dyn std::error::Error>> {
-    let exe_path = env::current_exe()?;                  
+    let exe_path = env::current_exe()?;
     let exe_dir = exe_path.parent().ok_or("No exe dir")?;
-    Ok(exe_dir.join(lib_name))                     
+    Ok(exe_dir.join(lib_name))
 }
 
 fn main() -> ResultE<()> {
     let lib_path = get_library_path(LIB_NAME)?;
-	let lib = unsafe { Library::new(lib_path) }?;
+    let lib = unsafe { Library::new(lib_path) }?;
 
     unsafe {
-        // core API
         let websocket_create: Symbol<unsafe extern "C" fn() -> *mut c_void> =
             lib.get(b"websocket_create\0")?;
         let websocket_destroy: Symbol<unsafe extern "C" fn(*mut c_void)> =
@@ -177,7 +164,6 @@ fn main() -> ResultE<()> {
             unsafe extern "C" fn(*mut c_void, *const c_char, *mut c_void) -> e_ws_status,
         > = lib.get(b"websocket_on\0")?;
 
-        // frame helpers
         FRAME_CREATE
             .set(*lib.get(b"websocket_frame_create\0")?)
             .ok();
@@ -187,7 +173,6 @@ fn main() -> ResultE<()> {
             .set(*lib.get(b"websocket_frame_destroy\0")?)
             .ok();
 
-        // settings & context
         let mut settings = default_ws_settings();
         settings.host = CString::new("localhost:4433")?.into_raw();
 
@@ -198,7 +183,6 @@ fn main() -> ResultE<()> {
             return Ok(());
         }
 
-        // register callbacks
         for (event, cb) in [
             (EVT_OPEN, on_open as *mut c_void),
             (EVT_CLOSE, on_close as *mut c_void),
@@ -210,7 +194,6 @@ fn main() -> ResultE<()> {
             }
         }
 
-        // apply settings
         if websocket_setup(ctx, &settings) == e_ws_status_status_error {
             eprintln!("setup failed");
             websocket_destroy(ctx);
@@ -218,7 +201,6 @@ fn main() -> ResultE<()> {
             return Ok(());
         }
 
-        // bind (server) or open (client)
         let rc = if cfg!(feature = "client") {
             websocket_open(
                 ctx,

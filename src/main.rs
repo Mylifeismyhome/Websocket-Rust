@@ -17,6 +17,8 @@ compile_error!("Enable either the `client` or `server` feature (exactly one).");
 #[cfg(all(feature = "client", feature = "server"))]
 compile_error!("Features `client` and `server` are mutually exclusive.");
 
+use std::env;
+use std::path::PathBuf;
 use libloading::{Library, Symbol};
 use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_int, c_uchar, c_void};
@@ -134,8 +136,15 @@ unsafe extern "C" fn on_error(_ctx: *mut c_void, msg: *const c_char) {
 
 type ResultE<T> = Result<T, Box<dyn std::error::Error>>;
 
+fn get_library_path(lib_name: &str) -> Result<PathBuf, Box<dyn std::error::Error>> {
+    let exe_path = env::current_exe()?;                  
+    let exe_dir = exe_path.parent().ok_or("No exe dir")?;
+    Ok(exe_dir.join(lib_name))                     
+}
+
 fn main() -> ResultE<()> {
-    let lib = unsafe { Library::new(LIB_NAME) }?;
+    let lib_path = get_library_path(LIB_NAME)?;
+	let lib = unsafe { Library::new(lib_path) }?;
 
     unsafe {
         // core API

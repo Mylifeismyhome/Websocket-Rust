@@ -45,14 +45,14 @@ fi
 # Copy and rename the built shared library
 echo
 
-SRC_NAME="LIB_SHARED"
+SRC_NAME="libLIB_SHARED"
 if [[ "$OSTYPE" == "darwin"* ]]; then
     SRC_EXT=".dylib"
 else
     SRC_EXT=".so"
 fi
 
-SRC_PATH="submodule/Websocket/build/bin/${BUILD_TYPE,,}/${SRC_NAME}${SRC_EXT}"
+SRC_PATH="submodule/Websocket/build/lib/${SRC_NAME}${SRC_EXT}"
 DEST_PATH="target/$RUST_BUILD/Websocket${SRC_EXT}"
 
 if [[ -f "$SRC_PATH" ]]; then

@@ -1,19 +1,18 @@
 # Websocket-Rust
 
-This repository provides a Rust wrapper around a C-based WebSocket implementation, exposing it as a shared library with a C-compatible API. It enables projects written in C, C++, or other FFI-friendly languages to easily integrate WebSocket capabilities powered by Rust.
+This repository integrates a C-based WebSocket implementation into a Rust project using FFI. The core WebSocket logic is implemented entirely in C and included as a Git submodule. Rust bindings are generated from the C headers using `bindgen`.
 
 ## 🧩 Structure
 
 This project uses a Git submodule:
 
-- [`Websocket`](https://github.com/Mylifeismyhome/Websocket): A C-based WebSocket implementation.
+- [`Websocket`](https://github.com/Mylifeismyhome/Websocket): A C-based WebSocket implementation with a C API.
 
 ## 📦 Features
 
-- Wraps a C WebSocket library with Rust.
-- Exposes a C-compatible API via a shared library (`.so`, `.dll`, `.dylib`).
-- Uses [`bindgen`](https://docs.rs/bindgen/latest/bindgen/) to generate C bindings for Rust.
-- Enables FFI-friendly WebSocket communication.
+- Integrates a C WebSocket library directly into Rust.
+- Uses `bindgen` to generate Rust FFI bindings from C headers.
+- Builds a shared Rust library using the C backend.
 
 ## 🚀 Getting Started
 
@@ -29,7 +28,7 @@ cd Websocket-Rust
 You will need the following installed:
 
 - [Rust and Cargo](https://www.rust-lang.org/tools/install)
-- [LLVM + Clang](https://llvm.org/)
+- [LLVM + Clang](https://llvm.org/) (required for `bindgen`)
 - Git
 
 #### On Ubuntu/Debian:
@@ -71,46 +70,12 @@ Ensure `cargo` and `clang` are in your system PATH.
 build.bat
 ```
 
-This compiles the Rust code and generates a C header using `bindgen`.
-
 #### On macOS / Linux:
 
 ```bash
 chmod +x build.sh
 ./build.sh
 ```
-
-Same as above—builds the shared library and generates the C header.
-
-## 🏗️ Output
-
-After building, you'll find:
-
-- `target/release/websocket.dll` (Windows)
-- `target/release/libwebsocket.so` (Linux)
-- `target/release/libwebsocket.dylib` (macOS)
-- `websocket.h` — C header for the public API
-
-## 🔧 Using the Library in C/C++
-
-Include the header and link against the compiled shared library in your C/C++ project.
-
-### Example C usage:
-
-```c
-#include "websocket.h"
-
-int main() {
-    ws_start("ws://echo.websocket.org");
-    // your logic here
-    return 0;
-}
-```
-
-Ensure your compiler knows where to find the header and library:
-
-- On Linux/macOS, you might need to set `LD_LIBRARY_PATH` or `DYLD_LIBRARY_PATH`.
-- On Windows, make sure the `.dll` is in the same directory as your executable or in your `PATH`.
 
 ## ❓ Troubleshooting
 
@@ -120,8 +85,3 @@ Ensure your compiler knows where to find the header and library:
 ## 📄 License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more info.
-
----
-
-Maintained by [@Mylifeismyhome](https://github.com/Mylifeismyhome)  
-Feel free to open issues or pull requests!

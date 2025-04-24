@@ -29,7 +29,6 @@ You will need the following installed:
 
 - [Rust and Cargo](https://www.rust-lang.org/tools/install)
 - [LLVM + Clang](https://llvm.org/) (required for `bindgen`)
-- Git
 
 #### On Ubuntu/Debian:
 

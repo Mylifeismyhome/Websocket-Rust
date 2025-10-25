@@ -2,19 +2,19 @@
 
 This repository integrates a C-based WebSocket implementation into a Rust project using FFI. The core WebSocket logic is implemented entirely in C and included as a Git submodule. Rust bindings are generated from the C headers using `bindgen`.
 
-## 🧩 Structure
+## Structure
 
 This project uses a Git submodule:
 
 - [`Websocket`](https://github.com/Mylifeismyhome/Websocket): A C-based WebSocket implementation with a C API.
 
-## 📦 Features
+## Features
 
 - Integrates a C WebSocket library directly into Rust.
 - Uses `bindgen` to generate Rust FFI bindings from C headers.
 - Builds a shared Rust library using the C backend.
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Clone with submodules
 
@@ -76,11 +76,11 @@ chmod +x build.sh
 ./build.sh
 ```
 
-## ❓ Troubleshooting
+## Troubleshooting
 
 - If `bindgen` fails, make sure LLVM and Clang are correctly installed and accessible via PATH.
 - On Windows, use the MSVC toolchain and developer command prompt if needed.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more info.
